@@ -1,4 +1,7 @@
-from girder.api.rest import Resource
+from girder.api import access
+from girder.api.rest import Resource, loadmodel
+from girder.api.describe import Description, autoDescribeRoute, describeRoute
+from girder.constants import AccessType, TokenScope
 
 
 class HPCMP(Resource):
@@ -11,34 +14,31 @@ class HPCMP(Resource):
         self.route('DELETE', ('stream', ':id'), self.close_stream)
 
     @access.public(TokenScope.DATA_READ)
-    @loadmodel(model='file', level=AccessType.READ)
-    @describeRoute(
+    @autoDescribeRoute(
         Description('Open a new stream for reading')
-        .param('id', 'The File ID', paramType='path')
+        .modelParam('id', model='file', level=AccessType.READ)
         .errorResponse('Read access was denied on this journal.', 403)
     )
-    self.open_stream(file):
+    def open_stream(self, file, params):
         return file
 
     @access.public(TokenScope.DATA_READ)
-    @loadmodel(model='file', level=AccessType.READ)
-    @describeRoute(
+    @autoDescribeRoute(
         Description('Open a new stream for reading')
-        .param('id', 'The stream ID')
+        .modelParam('id', model='file', level=AccessType.READ)
         .errorResponse('Read access was denied on this journal.', 403)
     )
-    self.read_stream(id):
-        return id
+    def read_stream(self, file, params):
+        return file
 
     @access.public(TokenScope.DATA_READ)
-    @loadmodel(model='file', level=AccessType.READ)
-    @describeRoute(
+    @autoDescribeRoute(
         Description('Open a new stream for reading')
-        .param('id', 'The stream ID')
+        .modelParam('id', model='file', level=AccessType.READ)
         .errorResponse('Read access was denied on this journal.', 403)
     )
-    self.close_stream(id):
-        return id
+    def close_stream(self, file, params):
+        return file
 
 
 def load(info):
