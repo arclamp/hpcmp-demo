@@ -7,19 +7,25 @@ wrap(ItemView, 'render', function (render) {
   this.model.getAccessLevel(accessLevel => {
     render.call(this);
 
-    this.hpcmpWidget = new HPCMPWidget({
-      className: 'g-hpcmp-container',
-      item: this.model,
-      accessLevel: accessLevel,
-      parentView: this
-    });
-    this.hpcmpWidget.$el.appendTo(this.$el);
+    const go = (this.model.get('meta') || {}).hpcmp;
 
-    let counter = 1.5;
-    window.setInterval(() => {
-      this.hpcmpWidget.addData(counter, Math.random() * 25);
-      counter += 0.1;
-    }, 1000);
+    if (go) {
+      this.hpcmpWidget = new HPCMPWidget({
+        className: 'g-hpcmp-container',
+        item: this.model,
+        accessLevel: accessLevel,
+        parentView: this
+      });
+      this.hpcmpWidget.$el.appendTo(this.$el);
+
+      let counter = 1.5;
+      let value = 0;
+      window.setInterval(() => {
+        this.hpcmpWidget.addData(counter, 15 + value);
+        counter += 0.1;
+        value = (value + 1) % 5;
+      }, 1000);
+    }
   });
 
   return this;

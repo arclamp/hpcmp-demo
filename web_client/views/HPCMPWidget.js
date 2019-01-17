@@ -18,8 +18,6 @@ const HPCMPWidget = View.extend({
 
     const el = this.$('.volume-chart').get(0);
 
-    console.log(el);
-
     this.volumeChart = new LineChart(el, {
       data: [
         {a: 1.0, b: 1},
@@ -31,7 +29,8 @@ const HPCMPWidget = View.extend({
       x: 'a',
       y: 'b',
       width: 500,
-      height: 400
+      height: 400,
+      renderer: 'svg'
     });
     this.volumeChart.render();
 
