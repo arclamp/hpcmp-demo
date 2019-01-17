@@ -1,0 +1,11 @@
+{
+  "name": "hpcmp_demo",
+  "version": "0.1.0",
+  "main": "index.js",
+  "repository": "git@github.com:arclamp/hpcmp-demo",
+  "author": "Roni Choudhury <roni.choudhury@kitware.com>",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@candela/vega": "^0.23.4"
+  }
+}
