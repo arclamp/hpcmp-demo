@@ -14,6 +14,12 @@ wrap(ItemView, 'render', function (render) {
       parentView: this
     });
     this.hpcmpWidget.$el.appendTo(this.$el);
+
+    let counter = 1.5;
+    window.setInterval(() => {
+      this.hpcmpWidget.addData(counter, Math.random() * 25);
+      counter += 0.1;
+    }, 1000);
   });
 
   return this;
