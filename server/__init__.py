@@ -1,3 +1,4 @@
+import csv
 import types
 
 from girder.api import access
@@ -47,15 +48,18 @@ class HPCMP(Resource):
         self.route('DELETE', ('stream', ':id'), self.close_stream)
 
         self.table = {}
+        self.headers = {}
 
     @access.public(TokenScope.DATA_READ)
     @autoDescribeRoute(
         Description('Open a new stream for reading')
         .modelParam('id', model='item', level=AccessType.READ)
+        .param('header', 'Does the csv file contain a header?', dataType='boolean', required=False)
         .errorResponse('Read access was denied on this journal.', 403)
     )
     def open_stream(self, item, params):
         id = item['_id']
+        header = params.get('header')
 
         if id in self.table:
             raise RestException('stream {} already open'.format(id))
@@ -65,6 +69,10 @@ class HPCMP(Resource):
 
         f = add_linebuffering(self.model('file').open(file))
         self.table[id] = f
+
+        if header:
+            self.headers[id] = csv.reader([f.readline()]).next()
+            return self.headers[id]
 
         return id
 
@@ -95,6 +103,11 @@ class HPCMP(Resource):
                 break
 
             data.append(line)
+
+        data = list(csv.reader(data))
+
+        if self.headers[id]:
+            data = map(lambda x: dict(zip(self.headers[id], x)), data)
 
         return {
             'data': data,
