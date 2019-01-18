@@ -62,7 +62,7 @@ class HPCMP(Resource):
         header = params.get('header')
 
         if id in self.table:
-            raise RestException('stream {} already open'.format(id))
+            return False
 
         it = self.model('item').load(id, level=AccessType.READ, user=self.getCurrentUser())
         file = self.model('item').childFiles(it).next()
