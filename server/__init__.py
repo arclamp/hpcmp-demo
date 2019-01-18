@@ -72,21 +72,34 @@ class HPCMP(Resource):
     @autoDescribeRoute(
         Description('Read a line from a stream')
         .modelParam('id', model='item', level=AccessType.READ)
+        .param('lines', 'How many lines to read', required=False)
         .errorResponse('Read access was denied on this journal.', 403)
     )
     def read_stream(self, item, params):
         id = item['_id']
+        lines = int(params.get('lines') or 1)
 
         if id not in self.table:
             raise RestException('No such stream {}'.format(id))
 
         f = self.table[id]
-        data = f.readline()
 
-        if not data:
-            del self.table[id]
+        data = []
+        more = True
+        for i in range(lines):
+            try:
+                line = f.readline()
+            except StopIteration:
+                more = False
+                del self.table[id]
+                break
 
-        return data
+            data.append(line)
+
+        return {
+            'data': data,
+            'more': more
+        }
 
     @access.public(TokenScope.DATA_READ)
     @autoDescribeRoute(
