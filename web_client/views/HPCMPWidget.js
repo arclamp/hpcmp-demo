@@ -43,7 +43,7 @@ const HPCMPWidget = View.extend({
 
   start: function () {
     if (!this.interval) {
-      this.interval = window.setInterval(() => this.getData(), 1000);
+      this.interval = window.setInterval(() => this.getData(), 500);
     }
   },
 
