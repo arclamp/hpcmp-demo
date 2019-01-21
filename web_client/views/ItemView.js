@@ -1,5 +1,6 @@
 import ItemView from 'girder/views/body/ItemView';
 import { wrap } from 'girder/utilities/PluginUtils';
+import { restRequest } from 'girder/rest';
 
 import HPCMPWidget from './HPCMPWidget';
 
@@ -17,6 +18,16 @@ wrap(ItemView, 'render', function (render) {
         parentView: this
       });
       this.hpcmpWidget.$el.appendTo(this.$el);
+
+      restRequest({
+        type: 'POST',
+        url: `hpcmp/stream/${this.model.id}`,
+        data: {
+          header: true
+        }
+      }).then((post) => {
+        this.hpcmpWidget.start();
+      });
     }
   });
 

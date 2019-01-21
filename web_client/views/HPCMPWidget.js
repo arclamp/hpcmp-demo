@@ -38,8 +38,6 @@ const HPCMPWidget = View.extend({
     });
     this.volumeChart.render();
 
-    this.start();
-
     return this;
   },
 
@@ -61,12 +59,11 @@ const HPCMPWidget = View.extend({
       type: 'POST',
       url: `hpcmp/stream/${this.item.id}/read`,
     }).then((data) => {
-      console.log(data.data);
       let rec = {
         a: +data.data[0].ts,
         b: +data.data[0].resp_bytes || 0
       };
-      console.log(rec);
+      console.log(JSON.stringify(rec));
       this.addData(rec.a, rec.b);
     });
   },
