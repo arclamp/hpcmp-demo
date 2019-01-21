@@ -20,11 +20,16 @@ wrap(ItemView, 'render', function (render) {
       this.hpcmpWidget.$el.appendTo(this.$el);
 
       restRequest({
-        type: 'POST',
-        url: `hpcmp/stream/${this.model.id}`,
-        data: {
-          header: true
-        }
+        type: 'DELETE',
+        url: `hpcmp/stream/${this.model.id}`
+      }).then(() => {
+        return restRequest({
+          type: 'POST',
+          url: `hpcmp/stream/${this.model.id}`,
+          data: {
+            header: true
+          }
+        });
       }).then((post) => {
         this.hpcmpWidget.start();
       });
