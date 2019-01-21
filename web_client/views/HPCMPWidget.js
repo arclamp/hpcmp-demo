@@ -4,6 +4,7 @@ import View from 'girder/views/View';
 import { restRequest } from 'girder/rest';
 
 import HPCMPWidgetTemplate from './hpcmpWidget.pug';
+import RollingAverage from '../util/RollingAverage';
 
 const HPCMPWidget = View.extend({
   events: {
@@ -19,6 +20,7 @@ const HPCMPWidget = View.extend({
     this.item = settings.item;
     this.accessLevel = settings.accessLevel;
     this.interval = null;
+    this.average = new RollingAverage(30);
 
     this.render();
   },
@@ -69,7 +71,8 @@ const HPCMPWidget = View.extend({
       console.log(JSON.stringify(rec));
 
       if (this.volumeChart.options.data.length == 0 || (rec.a > this.volumeChart.options.data[this.volumeChart.options.data.length - 1].a)) {
-        this.addData(rec.a, rec.b);
+        this.average.add(rec.b);
+        this.addData(rec.a, this.average.average());
       }
     });
   },
