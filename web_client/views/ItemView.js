@@ -8,7 +8,7 @@ wrap(ItemView, 'render', function (render) {
   this.model.getAccessLevel(accessLevel => {
     render.call(this);
 
-    const go = (this.model.get('meta') || {}).hpcmp;
+    const go = (this.model.get('meta') || {}).brolog;
 
     if (go) {
       this.hpcmpWidget = new HPCMPWidget({
