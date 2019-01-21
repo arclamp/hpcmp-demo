@@ -46,7 +46,7 @@ const HPCMPWidget = View.extend({
 
   start: function () {
     if (!this.interval) {
-      this.interval = window.setInterval(() => this.getData(), 500);
+      this.interval = window.setInterval(() => this.getData(), 200);
     }
   },
 
@@ -67,12 +67,18 @@ const HPCMPWidget = View.extend({
         b: +data.data[0].resp_bytes || 0
       };
       console.log(JSON.stringify(rec));
-      this.addData(rec.a, rec.b);
+
+      if (this.volumeChart.options.data.length == 0 || (rec.a > this.volumeChart.options.data[this.volumeChart.options.data.length - 1].a)) {
+        this.addData(rec.a, rec.b);
+      }
     });
   },
 
   addData: function (x, y) {
     this.volumeChart.options.data.push({a: x, b: y});
+    if (this.volumeChart.options.data.length > 50) {
+      this.volumeChart.options.data = this.volumeChart.options.data.slice(1);
+    }
     this.volumeChart.render();
   }
 });
