@@ -43,12 +43,21 @@ class HPCMP(Resource):
         super(HPCMP, self).__init__();
         self.resourceName = 'hpcmp'
 
+        self.route('GET', ('stream',), self.get_streams)
         self.route('POST', ('stream', ':id'), self.open_stream)
         self.route('POST', ('stream', ':id', 'read'), self.read_stream)
         self.route('DELETE', ('stream', ':id'), self.close_stream)
 
         self.table = {}
         self.headers = {}
+
+    @access.public(TokenScope.DATA_READ)
+    @autoDescribeRoute(
+        Description('Return all existing streams')
+        .errorResponse('Read access was denied on this journal.', 403)
+    )
+    def get_streams(self, params):
+        return self.table.keys()
 
     @access.public(TokenScope.DATA_READ)
     @autoDescribeRoute(
