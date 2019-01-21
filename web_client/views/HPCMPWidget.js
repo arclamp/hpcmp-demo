@@ -1,4 +1,4 @@
-import { LineChart } from '@candela/vega';
+import { BarChart, LineChart } from '@candela/vega';
 
 import View from 'girder/views/View';
 import { restRequest } from 'girder/rest';
@@ -43,6 +43,16 @@ const HPCMPWidget = View.extend({
     });
     this.volumeChart.render();
 
+    const barEl = this.$('.bar-chart').get(0);
+    this.barChart = new BarChart(barEl, {
+      data: [{a: 'internal', b: 0}, {a: 'external', b: 0}],
+      x: 'a',
+      y: 'b',
+      width: 100,
+      height: 400
+    });
+    this.barChart.render();
+
     return this;
   },
 
@@ -66,13 +76,16 @@ const HPCMPWidget = View.extend({
     }).then((data) => {
       let rec = {
         a: +data.data[0].ts,
-        b: +data.data[0].resp_bytes || 0
+        b: +data.data[0].resp_bytes || 0,
+        respIP: data.data[0]['id.resp_h']
       };
       console.log(JSON.stringify(rec));
 
       if (this.volumeChart.options.data.length == 0 || (rec.a > this.volumeChart.options.data[this.volumeChart.options.data.length - 1].a)) {
         this.average.add(rec.b);
         this.addData(rec.a, this.average.average());
+
+        this.countIP(rec.respIP);
       }
     });
   },
@@ -83,6 +96,16 @@ const HPCMPWidget = View.extend({
       this.volumeChart.options.data = this.volumeChart.options.data.slice(1);
     }
     this.volumeChart.render();
+  },
+
+  countIP: function (ip) {
+    const internal = ip.startsWith('192.168.');
+    if (internal) {
+      this.barChart.options.data[0].b++;
+    } else {
+      this.barChart.options.data[1].b++;
+    }
+    this.barChart.render();
   }
 });
 
