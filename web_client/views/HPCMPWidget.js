@@ -34,7 +34,10 @@ const HPCMPWidget = View.extend({
       y: 'b',
       width: 500,
       height: 400,
-      renderer: 'svg'
+      renderer: 'svg',
+      xScale: {
+        nice: false
+      }
     });
     this.volumeChart.render();
 
