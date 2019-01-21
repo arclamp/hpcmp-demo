@@ -49,7 +49,8 @@ const HPCMPWidget = View.extend({
       x: 'a',
       y: 'b',
       width: 100,
-      height: 400
+      height: 400,
+      renderer: 'svg'
     });
     this.barChart.render();
 
