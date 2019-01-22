@@ -63,6 +63,27 @@ const HPCMPWidget = View.extend({
     });
     this.barChart.render();
 
+    const barEl2 = this.$('.bar-chart-service').get(0);
+    this.barChartService = new CustomBarChart(barEl2, {
+      data: [
+        {service: 'dhcp', count: 0},
+        {service: 'dns', count: 0},
+        {service: 'http', count: 0},
+        {service: 'ssh', count: 0},
+        {service: 'ssl', count: 0},
+        {service: 'unknown', count: 0},
+      ],
+      x: 'service',
+      y: 'count',
+      yAxis: {
+        title: 'count'
+      },
+      width: 300,
+      height: 400,
+      renderer: 'svg'
+    });
+    this.barChartService.render();
+
     return this;
   },
 
@@ -87,7 +108,8 @@ const HPCMPWidget = View.extend({
       let rec = {
         time: +data.data[0].ts * 1000,
         'response size (bytes)': +data.data[0].resp_bytes || 0,
-        respIP: data.data[0]['id.resp_h']
+        respIP: data.data[0]['id.resp_h'],
+        service: data.data[0].service
       };
       console.log(JSON.stringify(rec));
 
@@ -96,6 +118,8 @@ const HPCMPWidget = View.extend({
         this.addData(rec.time, this.average.average());
 
         this.countIP(rec.respIP);
+
+        this.countService(rec.service);
       }
     });
   },
@@ -116,6 +140,44 @@ const HPCMPWidget = View.extend({
       this.barChart.options.data[1].count++;
     }
     this.barChart.render();
+  },
+
+  countService: function (service) {
+    let index;
+    switch (service) {
+      case 'dhcp': {
+        index = 0;
+        break;
+      }
+
+      case 'dns': {
+        index = 1;
+        break;
+      }
+
+      case 'http': {
+        index = 2;
+        break;
+      }
+
+      case 'ssh': {
+        index = 3;
+        break;
+      }
+
+      case 'ssl': {
+        index = 4;
+        break;
+      }
+
+      default: {
+        index = 5;
+        break;
+      }
+    }
+
+    this.barChartService.options.data[index].count++;
+    this.barChartService.render();
   }
 });
 
