@@ -34,12 +34,12 @@ const HPCMPWidget = View.extend({
 
     this.volumeChart = new CustomLineChart(el, {
       data: [],
-      x: 'a',
+      x: 'time',
       xType: 'temporal',
       xAxis: {
         format: '%H:%M:%S.%L'
       },
-      y: 'b',
+      y: 'response size (bytes)',
       width: 500,
       height: 400,
       renderer: 'svg',
@@ -85,15 +85,15 @@ const HPCMPWidget = View.extend({
       url: `hpcmp/stream/${this.item.id}/read`,
     }).then((data) => {
       let rec = {
-        a: +data.data[0].ts * 1000,
-        b: +data.data[0].resp_bytes || 0,
+        time: +data.data[0].ts * 1000,
+        'response size (bytes)': +data.data[0].resp_bytes || 0,
         respIP: data.data[0]['id.resp_h']
       };
       console.log(JSON.stringify(rec));
 
-      if (this.volumeChart.options.data.length == 0 || (rec.a > this.volumeChart.options.data[this.volumeChart.options.data.length - 1].a)) {
-        this.average.add(rec.b);
-        this.addData(rec.a, this.average.average());
+      if (this.volumeChart.options.data.length == 0 || (rec.time > this.volumeChart.options.data[this.volumeChart.options.data.length - 1].time)) {
+        this.average.add(rec['response size (bytes)']);
+        this.addData(rec.time, this.average.average());
 
         this.countIP(rec.respIP);
       }
@@ -101,7 +101,7 @@ const HPCMPWidget = View.extend({
   },
 
   addData: function (x, y) {
-    this.volumeChart.options.data.push({a: x, b: y});
+    this.volumeChart.options.data.push({time: x, 'response size (bytes)': y});
     if (this.volumeChart.options.data.length > 50) {
       this.volumeChart.options.data = this.volumeChart.options.data.slice(1);
     }
