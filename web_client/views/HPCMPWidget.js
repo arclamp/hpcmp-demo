@@ -1,4 +1,4 @@
-import { BarChart } from '@candela/vega';
+// import { BarChart } from '@candela/vega';
 
 import View from 'girder/views/View';
 import { restRequest } from 'girder/rest';
@@ -6,6 +6,7 @@ import { restRequest } from 'girder/rest';
 import HPCMPWidgetTemplate from './hpcmpWidget.pug';
 import RollingAverage from '../util/RollingAverage';
 import CustomLineChart from '../util/CustomLineChart';
+import CustomBarChart from '../util/CustomBarChart';
 
 const HPCMPWidget = View.extend({
   events: {
@@ -49,10 +50,13 @@ const HPCMPWidget = View.extend({
     this.volumeChart.render();
 
     const barEl = this.$('.bar-chart').get(0);
-    this.barChart = new BarChart(barEl, {
-      data: [{a: 'internal', b: 0}, {a: 'external', b: 0}],
-      x: 'a',
-      y: 'b',
+    this.barChart = new CustomBarChart(barEl, {
+      data: [{'host type': 'internal', count: 0}, {'host type': 'external', count: 0}],
+      x: 'host type',
+      y: 'count',
+      yAxis: {
+        title: 'count'
+      },
       width: 100,
       height: 400,
       renderer: 'svg'
@@ -107,9 +111,9 @@ const HPCMPWidget = View.extend({
   countIP: function (ip) {
     const internal = ip.startsWith('192.168.');
     if (internal) {
-      this.barChart.options.data[0].b++;
+      this.barChart.options.data[0].count++;
     } else {
-      this.barChart.options.data[1].b++;
+      this.barChart.options.data[1].count++;
     }
     this.barChart.render();
   }
