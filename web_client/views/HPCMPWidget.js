@@ -1,10 +1,11 @@
-import { BarChart, LineChart } from '@candela/vega';
+import { BarChart } from '@candela/vega';
 
 import View from 'girder/views/View';
 import { restRequest } from 'girder/rest';
 
 import HPCMPWidgetTemplate from './hpcmpWidget.pug';
 import RollingAverage from '../util/RollingAverage';
+import CustomLineChart from '../util/CustomLineChart';
 
 const HPCMPWidget = View.extend({
   events: {
@@ -30,9 +31,13 @@ const HPCMPWidget = View.extend({
 
     const el = this.$('.volume-chart').get(0);
 
-    this.volumeChart = new LineChart(el, {
+    this.volumeChart = new CustomLineChart(el, {
       data: [],
       x: 'a',
+      xType: 'temporal',
+      xAxis: {
+        format: '%H:%M:%S.%L'
+      },
       y: 'b',
       width: 500,
       height: 400,
@@ -76,7 +81,7 @@ const HPCMPWidget = View.extend({
       url: `hpcmp/stream/${this.item.id}/read`,
     }).then((data) => {
       let rec = {
-        a: +data.data[0].ts,
+        a: +data.data[0].ts * 1000,
         b: +data.data[0].resp_bytes || 0,
         respIP: data.data[0]['id.resp_h']
       };
