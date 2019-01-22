@@ -1,6 +1,7 @@
 .g-item-hpcmp
-  .g-item-hpcmp-header
-    i.icon-chart-bar
-    | HPCMP visualization
-  .g-item-hpcmp-container
-    p Hello!
+  button.stop Stop
+  button.start Start
+  .g-item-hpcmp-container(style="display: flex;")
+    .volume-chart(style="width: 600px;")
+    .bar-chart(style="width: 200px;")
+    .bar-chart-service
